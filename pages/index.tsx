@@ -1,13 +1,12 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 import React, { useState } from "react";
 
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import TextField from "@mui/material/TextField";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { ToastContainer } from "react-toastify";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer } from "react-toastify";
 
 type QuestionType =
   | "Short answer"
@@ -17,11 +16,21 @@ type QuestionType =
   | "URL"
   | "Date";
 
+interface Question {
+  id: number;
+  type: QuestionType;
+  label: string;
+  value: string;
+  options?: string[];
+  minLength?: number;
+  maxLength?: number;
+}
+
 const Home = () => {
-  const [questions, setQuestions] = useState<any>([]);
-  const [selectedType, setSelectedType] = useState<string>("");
+  const [questions, setQuestions] = useState<Question[]>([]); // Use the Question type here
+  const [selectedType, setSelectedType] = useState<QuestionType | null>(null); // Change to QuestionType | null
   const [isPreview, setIsPreview] = useState<boolean>(false);
-  const [isURLValid, setIsURLValid] = useState(true); // Add this state for URL validation
+  const [isURLValid, setIsURLValid] = useState<boolean>(true);
 
   const questionTypes: QuestionType[] = [
     "Short answer",
@@ -32,7 +41,8 @@ const Home = () => {
   ];
 
   const addQuestion = () => {
-    const newQuestion: any = {
+    if (!selectedType) return; // Prevent adding a question without a selected type
+    const newQuestion: Question = {
       id: Date.now(),
       type: selectedType,
       label: "",
@@ -42,34 +52,35 @@ const Home = () => {
       maxLength: selectedType === "Long answer" ? 300 : undefined,
     };
 
-    setQuestions((prevQuestions: any) => [...prevQuestions, newQuestion]);
-    setSelectedType("");
+    setQuestions((prevQuestions) => [...prevQuestions, newQuestion]);
+    setSelectedType(null); // Reset selected type after adding
   };
 
-  const updateQuestion = (id: number, key: any, value: any) => {
-    setQuestions((prevQuestions: any) =>
-      prevQuestions.map((q: any) => (q.id === id ? { ...q, [key]: value } : q))
+  const updateQuestion = (id: number, key: keyof Question, value: any) => {
+    setQuestions((prevQuestions) =>
+      prevQuestions.map((q) => (q.id === id ? { ...q, [key]: value } : q))
     );
   };
 
-  const handleURLChange = (q: any, e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleURLChange = (
+    q: Question,
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const urlRegex = /^https:\/\/[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+([\/?%&=]*)$/;
     const value = e.target.value;
 
-    // Allow user to type anything, but only validate when they stop typing (on blur or form submission)
     updateQuestion(q.id, "value", value);
 
-    // If you want to validate it live, you can show a warning or highlight the input
     if (value && !urlRegex.test(value)) {
-      setIsURLValid(false); // Optionally show some state to track the validation error
+      setIsURLValid(false);
     } else {
-      setIsURLValid(true); // If valid, update validation state
+      setIsURLValid(true);
     }
   };
 
   const handleSubmit = () => {
     const incomplete = questions.some(
-      (q: any) =>
+      (q) =>
         (q.type !== "Single select" && !q.value.trim()) ||
         (q.type === "Short answer" && q.value.length < (q.minLength || 0)) ||
         (q.type === "Long answer" && q.value.length < (q.minLength || 0))
@@ -91,8 +102,8 @@ const Home = () => {
         <>
           <div className="mb-6 flex items-center space-x-4">
             <select
-              value={selectedType}
-              onChange={(e) => setSelectedType(e.target.value)}
+              value={selectedType || ""} // Use "" when null (if no type is selected)
+              onChange={(e) => setSelectedType(e.target.value as QuestionType)} // Cast to QuestionType
               className="block w-64 p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
               <option value="">Select Question Type</option>
               {questionTypes.map((type) => (
@@ -115,7 +126,7 @@ const Home = () => {
             </button>
           </div>
 
-          {questions.map((q: any) => (
+          {questions.map((q) => (
             <div key={q.id} className="mb-6 bg-gray-50 p-4 border rounded-md">
               <input
                 type="text"
@@ -147,7 +158,7 @@ const Home = () => {
                     className="block w-full mb-3 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                   />
                   <ul className="list-disc pl-5 text-gray-600">
-                    {q.options?.map((opt: any, idx: number) => (
+                    {q.options?.map((opt, idx) => (
                       <li key={idx}>{opt}</li>
                     ))}
                   </ul>
@@ -165,7 +176,7 @@ const Home = () => {
                         newValue?.toISOString() || ""
                       )
                     }
-                    renderInput={(params: any) => (
+                    renderInput={(params) => (
                       <TextField
                         {...params}
                         variant="outlined"
@@ -188,7 +199,7 @@ const Home = () => {
         </>
       ) : (
         <>
-          {questions.map((q: any) => (
+          {questions.map((q) => (
             <div key={q.id} className="mb-6">
               <label className="block font-medium text-gray-800 mb-2">
                 {q.label}
@@ -222,7 +233,7 @@ const Home = () => {
                   }
                   className="block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                   <option value="">Select an option</option>
-                  {q.options?.map((opt: any, idx: any) => (
+                  {q.options?.map((opt, idx) => (
                     <option key={idx} value={opt}>
                       {opt}
                     </option>
@@ -245,7 +256,7 @@ const Home = () => {
                     type="text"
                     placeholder="Link to your best work"
                     value={q.value}
-                    onChange={(e) => handleURLChange(q, e)} // Custom URL validation
+                    onChange={(e) => handleURLChange(q, e)}
                     className={`block w-full mb-3 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 ${
                       !isURLValid && q.value ? "border-red-500" : ""
                     }`}
