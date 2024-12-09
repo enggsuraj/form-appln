@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 import React, { useState } from "react";
 
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -92,8 +93,7 @@ const Home = () => {
             <select
               value={selectedType}
               onChange={(e) => setSelectedType(e.target.value)}
-              className="block w-64 p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            >
+              className="block w-64 p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
               <option value="">Select Question Type</option>
               {questionTypes.map((type) => (
                 <option key={type} value={type}>
@@ -110,8 +110,7 @@ const Home = () => {
                     ? "bg-blue-600 hover:bg-blue-700"
                     : "bg-gray-400 cursor-not-allowed"
                 }
-              `}
-            >
+              `}>
               Add Question
             </button>
           </div>
@@ -183,8 +182,7 @@ const Home = () => {
           {/* Preview Button */}
           <button
             onClick={() => setIsPreview(true)}
-            className="mt-4 px-6 py-2 bg-green-600 text-white font-medium rounded-md shadow-md hover:bg-green-700 transition"
-          >
+            className="mt-4 px-6 py-2 bg-green-600 text-white font-medium rounded-md shadow-md hover:bg-green-700 transition">
             Preview Form
           </button>
         </>
@@ -222,8 +220,7 @@ const Home = () => {
                   onChange={(e) =>
                     updateQuestion(q.id, "value", e.target.value)
                   }
-                  className="block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                >
+                  className="block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                   <option value="">Select an option</option>
                   {q.options?.map((opt: any, idx: any) => (
                     <option key={idx} value={opt}>
@@ -266,14 +263,12 @@ const Home = () => {
           <div className="mt-6 flex space-x-4">
             <button
               onClick={handleSubmit}
-              className="px-6 py-2 bg-blue-600 text-white font-medium rounded-md shadow-md hover:bg-blue-700 transition"
-            >
+              className="px-6 py-2 bg-blue-600 text-white font-medium rounded-md shadow-md hover:bg-blue-700 transition">
               Submit Form
             </button>
             <button
               onClick={() => setIsPreview(false)}
-              className="px-6 py-2 bg-gray-500 text-white font-medium rounded-md shadow-md hover:bg-gray-600 transition"
-            >
+              className="px-6 py-2 bg-gray-500 text-white font-medium rounded-md shadow-md hover:bg-gray-600 transition">
               Back to Edit
             </button>
           </div>
