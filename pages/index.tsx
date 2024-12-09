@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import TextField from "@mui/material/TextField";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -27,8 +26,8 @@ interface Question {
 }
 
 const Home = () => {
-  const [questions, setQuestions] = useState<Question[]>([]); // Use the Question type here
-  const [selectedType, setSelectedType] = useState<QuestionType | null>(null); // Change to QuestionType | null
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [selectedType, setSelectedType] = useState<QuestionType | null>(null);
   const [isPreview, setIsPreview] = useState<boolean>(false);
   const [isURLValid, setIsURLValid] = useState<boolean>(true);
 
@@ -41,7 +40,6 @@ const Home = () => {
   ];
 
   const addQuestion = () => {
-    if (!selectedType) return; // Prevent adding a question without a selected type
     const newQuestion: Question = {
       id: Date.now(),
       type: selectedType,
@@ -53,7 +51,7 @@ const Home = () => {
     };
 
     setQuestions((prevQuestions) => [...prevQuestions, newQuestion]);
-    setSelectedType(null); // Reset selected type after adding
+    setSelectedType(null);
   };
 
   const updateQuestion = (id: number, key: keyof Question, value: any) => {
@@ -102,8 +100,8 @@ const Home = () => {
         <>
           <div className="mb-6 flex items-center space-x-4">
             <select
-              value={selectedType || ""} // Use "" when null (if no type is selected)
-              onChange={(e) => setSelectedType(e.target.value as QuestionType)} // Cast to QuestionType
+              value={selectedType || ""}
+              onChange={(e) => setSelectedType(e.target.value as QuestionType)}
               className="block w-64 p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
               <option value="">Select Question Type</option>
               {questionTypes.map((type) => (
@@ -120,8 +118,7 @@ const Home = () => {
                   selectedType
                     ? "bg-blue-600 hover:bg-blue-700"
                     : "bg-gray-400 cursor-not-allowed"
-                }
-              `}>
+                }`}>
               Add Question
             </button>
           </div>
@@ -190,7 +187,6 @@ const Home = () => {
             </div>
           ))}
 
-          {/* Preview Button */}
           <button
             onClick={() => setIsPreview(true)}
             className="mt-4 px-6 py-2 bg-green-600 text-white font-medium rounded-md shadow-md hover:bg-green-700 transition">
